@@ -215,9 +215,8 @@ int main(int argc, char ** argv)
 			Index_In_Batch, Sum_Opt_Distance/Test_Inst_Num,Sum_My_Distance/Test_Inst_Num, Sum_Gap/Test_Inst_Num, ((double)clock()-Overall_Begin_Time)/CLOCKS_PER_SEC, Beat_Best_Known_Times, Match_Best_Known_Times, Miss_Best_Known_Times);
 	fclose(fp);
 	
-	printf("\n\nIndex_In_Batch: %d, Avg_Concorde_Distance: %f Avg_MCTS_Distance: %f Avg_Gap: %f Total_Time: %.2f Seconds \n Beat_Best_Known_Times: %d Match_Best_Known_Times: %d Miss_Best_Known_Times: %d \n",
-			Index_In_Batch, Sum_Opt_Distance/Test_Inst_Num,Sum_My_Distance/Test_Inst_Num, Sum_Gap/Test_Inst_Num, ((double)clock()-Overall_Begin_Time)/CLOCKS_PER_SEC, Beat_Best_Known_Times, Match_Best_Known_Times, Miss_Best_Known_Times);
-	getchar();
+        printf("\n\nIndex_In_Batch: %d, Avg_Concorde_Distance: %f Avg_MCTS_Distance: %f Avg_Gap: %f Total_Time: %.2f Seconds \n Beat_Best_Known_Times: %d Match_Best_Known_Times: %d Miss_Best_Known_Times: %d \n",
+                        Index_In_Batch, Sum_Opt_Distance/Test_Inst_Num,Sum_My_Distance/Test_Inst_Num, Sum_Gap/Test_Inst_Num, ((double)clock()-Overall_Begin_Time)/CLOCKS_PER_SEC, Beat_Best_Known_Times, Match_Best_Known_Times, Miss_Best_Known_Times);
 
 	return 0;
 }
@@ -274,12 +273,11 @@ bool Solve_Instances_In_Batch()
 	ifstream FIC;
 	FIC.open(Input_Inst_File_Name);  
   
-	if(FIC.fail())
-	{
-    	cout << "\n\nError! Fail to open file"<<Input_Inst_File_Name<<endl;
-    	getchar();
-    	return false;     
-	}
+        if(FIC.fail())
+        {
+        cout << "\n\nError! Fail to open file"<<Input_Inst_File_Name<<endl;
+        return false;
+        }
   	else
     	cout << "\n\nRead instances information from "<<Input_Inst_File_Name<<endl;
       	    
