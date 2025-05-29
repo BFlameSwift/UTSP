@@ -302,10 +302,13 @@ Distance_Type Greedy_Rollout_2Opt(int start_city)
         cur = next;
     }
 
+// <<<<<<< htjuz0-codex/integrate-2-opt-local-search
     // If we failed to construct a full tour, fall back to simple greedy rollout
     if(visited < Virtual_City_Num)
         return Greedy_Rollout(start_city);
 
+// =======
+// >>>>>>> m
     // Close the tour
     Convert_Solution_To_All_Node();
 
