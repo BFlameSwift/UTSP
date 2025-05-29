@@ -48,6 +48,7 @@ int Index_In_Batch;
 int rec_only;
 int restart_reconly;
 int use_greedy_rollout = 0; // whether to evaluate leaf nodes by greedy rollout
+int use_2opt_rollout = 0; // whether to apply 2-Opt after greedy rollout
 
 /*
  * Here we define new array to store the recomend citys and corresponding value

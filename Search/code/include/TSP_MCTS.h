@@ -1,6 +1,11 @@
 #include <iostream>
 #include <fstream>
 
+// Forward declarations of functions defined elsewhere
+Distance_Type Greedy_Rollout(int start_city);
+Distance_Type Greedy_Rollout_2Opt(int start_city);
+bool Execute_Best_Action();
+
 
 // Initialize the parameters used in MCTS
 void MCTS_Init(int Inst_Index)
@@ -191,10 +196,14 @@ Distance_Type Get_Simulated_Action_Delta(int Begin_City)
 				
         Pair_City_Num=Best_Index+1;
 
-        if(use_greedy_rollout){
+        if(use_greedy_rollout || use_2opt_rollout){
                 Store_Best_Solution();
                 Execute_Best_Action();
-                Distance_Type rollout_dist = Greedy_Rollout(Start_City);
+                Distance_Type rollout_dist;
+                if(use_2opt_rollout)
+                        rollout_dist = Greedy_Rollout_2Opt(Start_City);
+                else
+                        rollout_dist = Greedy_Rollout(Start_City);
                 Restore_Best_Solution();
                 return Before_Distance - rollout_dist;
         }
