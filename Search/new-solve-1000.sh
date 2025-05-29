@@ -17,11 +17,11 @@ md=$3
 alpha=$4
 beta=$5
 ph=$6
-retart=$7
-retart_rec=$8
+restart=$7
+restart_rec=$8
 for ((i=0;i<$threads;i++));do
 {
-	./test $i ${sources1000[i]} ${tsp[j]} ${instancenum[j]} ${use_rec} ${rec_only} ${mcn} ${md} ${alpha} ${beta} ${ph} ${retart} ${retart_rec}
+        ./test $i ${sources1000[i]} ${tsp[j]} ${instancenum[j]} ${use_rec} ${rec_only} ${mcn} ${md} ${alpha} ${beta} ${ph} ${restart} ${restart_rec}
 }&
 done
 wait
