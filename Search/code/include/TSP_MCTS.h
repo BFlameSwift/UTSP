@@ -198,7 +198,11 @@ Distance_Type Get_Simulated_Action_Delta(int Begin_City)
 
         if(use_greedy_rollout || use_2opt_rollout){
                 Store_Best_Solution();
-                Execute_Best_Action();
+                if(!Execute_Best_Action()){
+                        // If the generated action is invalid, discard it
+                        Restore_Best_Solution();
+                        return -Inf_Cost;
+                }
                 Distance_Type rollout_dist;
                 if(use_2opt_rollout)
                         rollout_dist = Greedy_Rollout_2Opt(Start_City);
@@ -289,13 +293,13 @@ bool Execute_Best_Action()
 	All_Node[Begin_City].Next_City=Cur_City;
 	All_Node[Cur_City].Pre_City=Begin_City;	
 	
-	if(Check_Solution_Feasible()==false)
-	{
-		printf("\nError! The solution after applying action from %d is unfeasible\n",Begin_City+1);
-		Print_TSP_Tour(Begin_City);		
-		getchar();
-		return false;		
-	}	
+        if(Check_Solution_Feasible()==false)
+        {
+                printf("\nError! The solution after applying action from %d is unfeasible\n",Begin_City+1);
+                Print_TSP_Tour(Begin_City);
+                // Do not pause execution; simply report failure
+                return false;
+        }
 
 	return true;
 }
@@ -303,9 +307,11 @@ bool Execute_Best_Action()
 // Process of the MCTS
 void MCTS()
 {	 
-	while(true)
-	{
-		Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();
+        while(true)
+        {
+                Distance_Type Before_Simulation_Distance = Get_Solution_Total_Distance();
+                // Keep a copy of the current solution in case the chosen action is infeasible
+                Store_Best_Solution();
 		
 		//Simulate a number of (controled by Param_H) actions
 		Distance_Type Best_Delta=Simulation(Param_H*Virtual_City_Num);
@@ -313,10 +319,14 @@ void MCTS()
 		// Use the information of the best action to update the parameters of MCTS by back propagation	
 		Back_Propagation(Before_Simulation_Distance,Best_Delta);
 				
-		if(Best_Delta > 0)
-		{
-			// Select the best action to execute
-			Execute_Best_Action();							
+                if(Best_Delta > 0)
+                {
+                        // Select the best action to execute
+                        if(!Execute_Best_Action()){
+                                // Restore previous solution if execution failed
+                                Restore_Best_Solution();
+                                continue;
+                        }
 			
 			// Store the best found solution to Struct_Node *Best_All_Node				
 			Distance_Type Cur_Solution_Total_Distance=Get_Solution_Total_Distance();		
