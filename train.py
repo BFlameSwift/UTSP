@@ -41,11 +41,15 @@ parser.add_argument('--stepsize', type=int, default=20,
                     help='step size')
 parser.add_argument('--diag_loss', type=float, default=0.1,
                     help='penalty on the diag')
+parser.add_argument('--device', type=str, default='cuda',
+                    help='Device to use (cuda or cpu)')
 args = parser.parse_args()
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 torch.backends.cudnn.enabled = True
-torch.cuda.manual_seed(args.seed)
+device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
+if device.type == 'cuda':
+    torch.cuda.manual_seed(args.seed)
 np.random.seed(args.seed)
 ### load train instance
 
@@ -127,20 +131,23 @@ from torch.optim.lr_scheduler import StepLR
 #optimizer = torch.optim.RMSprop(model.parameters(), lr=args.lr,weight_decay=args.wdecay)
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr,weight_decay=args.wdecay)
 scheduler = StepLR(optimizer, step_size=args.stepsize, gamma=0.8)
-model.cuda()
-mask = torch.ones(args.num_of_nodes, args.num_of_nodes).cuda()
+model = model.to(device)
+mask = torch.ones(args.num_of_nodes, args.num_of_nodes).to(device)
 mask.fill_diagonal_(0)
 def train(epoch):
     scheduler.step()
     model.train()
     print('Epoch: %d'%epoch)
     for batch in train_loader:
-        f0 = batch[0].cuda() 
-        distance_m = batch[1].cuda()      
+        f0 = batch[0].to(device)
+        distance_m = batch[1].to(device)
         adj = torch.exp(-1.*distance_m/args.temperature)
         adj *= mask 
         output = model(f0,adj)
-        TSPLoss_constaint,Heat_mat = TSPLoss(SctOutput=output,distance_matrix=distance_m,num_of_nodes=args.num_of_nodes)
+        TSPLoss_constaint,Heat_mat = TSPLoss(SctOutput=output,
+                                            distance_matrix=distance_m,
+                                            num_of_nodes=args.num_of_nodes,
+                                            device=device)
         Heat_mat_diagonals = [torch.diagonal(mat) for mat in Heat_mat]
         Heat_mat_diagonals = torch.stack(Heat_mat_diagonals, dim=0)
         Nrmlzd_constraint = (1. - torch.sum(output,2))**2

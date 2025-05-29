@@ -8,13 +8,16 @@ NeurIPS 2023
 
 
 
-Here we provide an example for TSP 100, 200, 500 and 1000. 
+Here we provide an example for TSP 100, 200, 500 and 1000.
+
+The training script accepts a `--device` argument so the code can run on CPU if
+no GPU is available. By default it uses `cuda`.
 
 # Unsupervised Learning
 ### Training on TSP 200:
 
-`python train.py --num_of_nodes 200 --EPOCHS 300 --batch_size 32 --temperature 3.5  --C1_penalty 20.0 --nlayers 2 --hidden 64 --rescale 2.0 --moment 1 --lr 5e-3 --stepsize 20
-`
+`python train.py --num_of_nodes 200 --EPOCHS 300 --batch_size 32 --temperature 3.5  --C1_penalty 20.0 --nlayers 2 --hidden 64 --rescale 2.0 --moment 1 --lr 5e-3 --stepsize 20`
+Add `--device cpu` to run on a machine without CUDA support.
 
 Generate TSP 200 heatmaps (test file):
 
