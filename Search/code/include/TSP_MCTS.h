@@ -10,14 +10,14 @@ bool Execute_Best_Action();
 // Initialize the parameters used in MCTS
 void MCTS_Init(int Inst_Index)
 {
-        for(int i=0;i<Virtual_City_Num;i++)
-        {
-                for(int j=0;j<Virtual_City_Num;j++)
-                {
-                        Weight[i][j]=0.0;
-                        Chosen_Times[i][j]=0;
-                }
-        }
+	for(int i=0;i<Virtual_City_Num;i++)
+	{
+		for(int j=0;j<Virtual_City_Num;j++)
+		{
+//			Weight[i][j]=0.;
+			Chosen_Times[i][j]=0;	
+		}
+	}
 	Total_Simulation_Times=0;	
     // Here we inject prior to the weight
     if (use_rec) {
