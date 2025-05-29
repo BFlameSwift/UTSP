@@ -62,118 +62,116 @@ void Solve_One_Instance(int Inst_Index)
 	Release_Memory(Virtual_City_Num);	
 }
  
+
 bool Solve_Instances_In_Batch()
-{ 
-	ifstream FIC;
-	FIC.open(Input_File_Name);  
-  
-	if(FIC.fail())
-	{
-    	cout << "\n\nError! Fail to open file"<<Input_File_Name<<endl;
-    	getchar();
-    	return false;     
-	}
-  	else
-    	cout << "\n\nBegin to read instances information from "<<Input_File_Name<<endl;
-    	    
-  			 
- 	double Temp_X;
- 	double Temp_Y;
- 	int Temp_City;
+{
+        ifstream FIC(Input_File_Name);
+
+        if(FIC.fail())
+        {
+        cout << "\n\nError! Fail to open file"<<Input_File_Name<<endl;
+        return false;
+        }
+        else
+        cout << "\n\nBegin to read instances information from "<<Input_File_Name<<endl;
+
+
+        double Temp_X;
+        double Temp_Y;
+        int Temp_City;
     int Rec_Index;
     double Rec_Value;
- 	char Temp_String[100]; 	
+        char Temp_String[100];
 
     cout << "Total Instance Considered: " << Total_Instance_Num << endl;
- 	
-  	for(int i=0;i<Total_Instance_Num;i++)   
-  	{
-  		for(int j=0;j<Temp_City_Num;j++)
-  		{
-			FIC>>Temp_X;
-			FIC>>Temp_Y;
-			Stored_Coordinates_X[i][j]=Temp_X;
-			Stored_Coordinates_Y[i][j]=Temp_Y;			
-		}
-		
-		FIC>>&Temp_String[0];  
-		for(int j=0;j<Temp_City_Num;j++)
-  		{
-			FIC>>Temp_City;
-			Stored_Opt_Solution[i][j]=Temp_City-1;					
-		}  	
-		
-		FIC>>Temp_City;			
-        // Here we start reading the recomend cities
-        FIC >> &Temp_String[0];
+
+        int start_index = Index_In_Batch*Inst_Num_Per_Batch;
+        int end_index = min(start_index + Inst_Num_Per_Batch, Total_Instance_Num);
+
+        std::string line;
+        for(int i=0;i<Total_Instance_Num;i++)
+        {
+                if(!std::getline(FIC, line))
+                        break;
+
+                if(i < start_index || i >= end_index)
+                        continue;
+
+                std::stringstream ss(line);
+
+                for(int j=0;j<Temp_City_Num;j++)
+                {
+                        ss>>Temp_X;
+                        ss>>Temp_Y;
+                        Stored_Coordinates_X[i][j]=Temp_X;
+                        Stored_Coordinates_Y[i][j]=Temp_Y;
+                }
+
+                ss>>Temp_String;
+                for(int j=0;j<Temp_City_Num;j++)
+                {
+                        ss>>Temp_City;
+                        Stored_Opt_Solution[i][j]=Temp_City-1;
+                }
+
+                ss>>Temp_City;
+        ss >> Temp_String;
         for (int j = 0; j < Temp_City_Num; ++j) {
             for (int k = 0; k < Rec_Num; ++k) {
-                FIC >> Rec_Index;
+                ss >> Rec_Index;
                 Sparse_Stored_Rec[i][j].push_back(Rec_Index - 1);
             }
         }
-        FIC >> &Temp_String[0];
+        ss >> Temp_String;
         for (int j = 0; j < Temp_City_Num; ++j) {
             for (int k = 0; k < Rec_Num; ++k) {
-                FIC >> Rec_Value;
+                ss >> Rec_Value;
                 Sparse_Stored_Rec_Value[i][j].push_back(Rec_Value);
             }
         }
 
-//  	cout <<"\nRead instances finished. Begin to search."<<endl;
         for (int j = 0; j < Temp_City_Num; ++j) {
-		for(int k = 0; k < Temp_City_Num; ++k)
-		{
-		Stored_Rec_Value[i][j].push_back(0.0);
-		}
+                Stored_Rec_Value[i][j].assign(Temp_City_Num,0.0);
+        }
+
+        for (int j = 0; j < Temp_City_Num; ++j) {
+            for (int l = 0; l < Temp_City_Num; ++l) {
+                auto it = std::find(Sparse_Stored_Rec[i][j].begin(), Sparse_Stored_Rec[i][j].end(), l);
+                if (it != Sparse_Stored_Rec[i][j].end()) {
+                    int index = std::distance(Sparse_Stored_Rec[i][j].begin(), it);
+                    Stored_Rec_Value[i][j][l] =  Sparse_Stored_Rec_Value[i][j][index];
+                }
             }
+        }
 
-	for (int j = 0; j < Temp_City_Num; ++j) {
-	    for (int l = 0; l < Temp_City_Num; ++l) {
-	        // Use std::find to look for 'l' in Sparse_Stored_Rec[i][j]
-	        auto it = std::find(Sparse_Stored_Rec[i][j].begin(), Sparse_Stored_Rec[i][j].end(), l);
-	        if (it != Sparse_Stored_Rec[i][j].end()) {
-	            // If found, calculate the index using std::distance
-	            int index = std::distance(Sparse_Stored_Rec[i][j].begin(), it);
-	            //std::cout << l << " index: " << index << std::endl;
-		    Stored_Rec_Value[i][j][l] =  Sparse_Stored_Rec_Value[i][j][index];
-	        }
-	    }
-	}
+        symmetrizeMatrix(Stored_Rec_Value[i], Max_City_Num);
+
+        for (int j = 0; j < Temp_City_Num; ++j) {
+                Stored_Rec[i][j].clear();
+                for (int m = 0; m < Temp_City_Num; ++m)
+                        Stored_Rec[i][j].push_back(m);
+        }
 
 
-	// H' = H + H^T
-	symmetrizeMatrix(Stored_Rec_Value[i], Max_City_Num);
-
-	for (int j = 0; j < Temp_City_Num; ++j) {
-		for (int m = 0; m < Temp_City_Num; ++m)
-               	Stored_Rec[i][j].push_back(m);
-	}
+        }
+        FIC.close();
 
 
+    cout << "Inst Num Per Batch " << Inst_Num_Per_Batch << endl;
+        Test_Inst_Num = end_index - start_index;
+        cout<<"\nNumber of instances in current batch: " <<Test_Inst_Num <<endl;
 
-	
-	}      
-  	FIC.close();  
 
+        FILE *fp;
+        fp=fopen(Statistics_File_Name, "w+");
+        fprintf(fp,"Number_of_Instances_In_Current_Batch: %d\n",Test_Inst_Num);
 
-    cout << "Inst Num Per Batch " << Inst_Num_Per_Batch << endl;	
-	if((Index_In_Batch+1)*Inst_Num_Per_Batch < Total_Instance_Num)
-		Test_Inst_Num=Inst_Num_Per_Batch;
-	else
-		Test_Inst_Num=Total_Instance_Num-Index_In_Batch*Inst_Num_Per_Batch; 
-	cout<<"\nNumber of instances in current batch: " <<Test_Inst_Num <<endl; 
-	
-	FILE *fp;   
-	fp=fopen(Statistics_File_Name, "w+");     
-	fprintf(fp,"Number_of_Instances_In_Current_Batch: %d\n",Test_Inst_Num);  
-	fclose(fp);   
-	
-			
-  	for(int i=Index_In_Batch*Inst_Num_Per_Batch;i<(Index_In_Batch+1)*Inst_Num_Per_Batch && i<Total_Instance_Num;i++)	   
-		Solve_One_Instance(i);	  
-        
-  	return true;  
+        fclose(fp);
+
+        for(int i=start_index;i<end_index;i++)
+                Solve_One_Instance(i);
+
+        return true;
 }
 
 int main(int argc, char ** argv)
