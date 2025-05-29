@@ -47,6 +47,7 @@ int Inst_Num_Per_Batch=std::ceil(Total_Instance_Num / 32);
 int Index_In_Batch;
 int rec_only;
 int restart_reconly;
+int use_greedy_rollout = 0; // whether to evaluate leaf nodes by greedy rollout
 
 /*
  * Here we define new array to store the recomend citys and corresponding value

@@ -115,9 +115,10 @@ int Choose_City_To_Connect(int Cur_City, int Begin_City)
 // Generate an action starting form Begin_City (corresponding to a_1 in the paper), return the delta value
 Distance_Type Get_Simulated_Action_Delta(int Begin_City)
 {
-	// Store the current solution to Solution[]
-	if(Convert_All_Node_To_Solution()==false)
-		return -Inf_Cost;		
+        // Store the current solution to Solution[]
+        if(Convert_All_Node_To_Solution()==false)
+                return -Inf_Cost;
+        Distance_Type Before_Distance = Get_Solution_Total_Distance();
 	
 	int Next_City=All_Node[Begin_City].Next_City;   // a_1=Begin city, b_1=Next_City
 	
@@ -188,9 +189,17 @@ Distance_Type Get_Simulated_Action_Delta(int Begin_City)
 			Best_Index=i;
 		}
 				
-	Pair_City_Num=Best_Index+1;
-	
-	return Max_Real_Gain;	
+        Pair_City_Num=Best_Index+1;
+
+        if(use_greedy_rollout){
+                Store_Best_Solution();
+                Execute_Best_Action();
+                Distance_Type rollout_dist = Greedy_Rollout(Start_City);
+                Restore_Best_Solution();
+                return Before_Distance - rollout_dist;
+        }
+
+        return Max_Real_Gain;
 }
 
 // If the delta of an action is greater than zero, use the information of this action (stored in City_Sequence[]) to update the parameters by back propagation
