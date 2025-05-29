@@ -105,10 +105,9 @@ bool Check_Solution_Feasible()
 		Visited_City_Num++;
 		if(Visited_City_Num > Virtual_City_Num)
 		{
-			printf("\nThe current solution is unvalid. Loop may exist\n");
-			getchar();
-			return false;
-		}
+                        printf("\nThe current solution is unvalid. Loop may exist\n");
+                        return false;
+                }
 				
 		if(Cur_City == Start_City && Visited_City_Num == Virtual_City_Num)	
 			return true;			 	
@@ -126,10 +125,9 @@ Distance_Type Get_Solution_Total_Distance()
   	  		Solution_Total_Distance += Get_Distance(i,Temp_Next_City); 
   		else
   		{
-  			printf("\nGet_Solution_Total_Distance() fail!\n");
-  			getchar();
-  			return Inf_Cost;
-		}  	  		
+                        printf("\nGet_Solution_Total_Distance() fail!\n");
+                        return Inf_Cost;
+                }
   	}	
   
   	return Solution_Total_Distance;
@@ -161,10 +159,9 @@ double Get_Current_Solution_Double_Distance()
   	  		Current_Solution_Double_Distance += Calculate_Double_Distance(i,Temp_Next_City);
   		else
   		{
-  			printf("\nGet_Current_Solution_Double_Distance() fail!\n");
-  			getchar();
-  			return Inf_Cost;
-		}  	  		
+                        printf("\nGet_Current_Solution_Double_Distance() fail!\n");
+                        return Inf_Cost;
+                }
   	}	
   
   	return Current_Solution_Double_Distance;
