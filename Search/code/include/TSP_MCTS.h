@@ -26,10 +26,12 @@ void MCTS_Init(int Inst_Index)
             for (int j = 0; j < Virtual_City_Num; ++j) {
                 int x = Stored_Rec[Inst_Index][i][j];
                 double v = Stored_Rec_Value[Inst_Index][i][j];
-                if (x != -2) {
-                    Weight[i][x] = 1.0*v;
+                if (x >= 0 && x < Virtual_City_Num) {
+                    Weight[i][x] = 1.0 * v;
+                } else {
+                    // Guard against invalid indices that could cause crashes
+                    fprintf(stderr, "Warning: invalid index %d at (%d,%d)\n", x, i, j);
                 }
-		else {Weight[i][x] = 0.0;}
             }
         }
     } else {

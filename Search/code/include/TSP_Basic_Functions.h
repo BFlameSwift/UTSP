@@ -118,18 +118,19 @@ bool Check_Solution_Feasible()
 Distance_Type Get_Solution_Total_Distance()
 {
   	Distance_Type Solution_Total_Distance=0;
-  	for(int i=0;i<Virtual_City_Num;i++)
-  	{
-  		int Temp_Next_City=All_Node[i].Next_City;
-  		if(Temp_Next_City != Null)
-  	  		Solution_Total_Distance += Get_Distance(i,Temp_Next_City); 
-  		else
-  		{
+        for(int i=0;i<Virtual_City_Num;i++)
+        {
+                int Temp_Next_City=All_Node[i].Next_City;
+                if(Temp_Next_City != Null)
+                        Solution_Total_Distance += Get_Distance(i,Temp_Next_City);
+                else
+                {
                         printf("\nGet_Solution_Total_Distance() fail!\n");
                         return Inf_Cost;
-      }
-  
-  	return Solution_Total_Distance;
+                }
+        }
+
+        return Solution_Total_Distance;
 }
 
 
@@ -151,18 +152,19 @@ double Get_Stored_Solution_Double_Distance(int Inst_Index)
 double Get_Current_Solution_Double_Distance()
 {
   	double Current_Solution_Double_Distance=0;
-  	for(int i=0;i<Virtual_City_Num;i++)
-  	{
-  		int Temp_Next_City=All_Node[i].Next_City;
-  		if(Temp_Next_City != Null)
-  	  		Current_Solution_Double_Distance += Calculate_Double_Distance(i,Temp_Next_City);
-  		else
-  		{
+        for(int i=0;i<Virtual_City_Num;i++)
+        {
+                int Temp_Next_City=All_Node[i].Next_City;
+                if(Temp_Next_City != Null)
+                        Current_Solution_Double_Distance += Calculate_Double_Distance(i,Temp_Next_City);
+                else
+                {
                         printf("\nGet_Current_Solution_Double_Distance() fail!\n");
                         return Inf_Cost;
-      }
-  
-  	return Current_Solution_Double_Distance;
+                }
+        }
+
+        return Current_Solution_Double_Distance;
 }
 
 // Return the unselected city neareast to Cur_City
@@ -214,22 +216,26 @@ bool Check_If_Two_City_Same_Or_Adjacent(int First_City, int Second_City)
 // For each city between First_City and Second City, reverse its Pre_City and Next_City 
 void Reverse_Sub_Path(int First_City,int Second_City)
 {
-	int Cur_City=First_City;
-	int Temp_Next_City=All_Node[Cur_City].Next_City;
-	
-	while(true)
-	{	
-		int Temp_City = All_Node[Cur_City].Pre_City;
-		All_Node[Cur_City].Pre_City=All_Node[Cur_City].Next_City;
-		All_Node[Cur_City].Next_City=Temp_City;
-		
-		if(Cur_City==Second_City)
-			break;
-		
-		Cur_City=Temp_Next_City;
-		Temp_Next_City=All_Node[Cur_City].Next_City;	
-	}	
-} 
+        int Cur_City=First_City;
+        int Temp_Next_City=All_Node[Cur_City].Next_City;
+
+        while(true)
+        {
+                int Temp_City = All_Node[Cur_City].Pre_City;
+                All_Node[Cur_City].Pre_City=All_Node[Cur_City].Next_City;
+                All_Node[Cur_City].Next_City=Temp_City;
+
+                if(Cur_City==Second_City)
+                        break;
+
+                Cur_City=Temp_Next_City;
+                if(Cur_City==Null)
+                        break;
+                Temp_Next_City=All_Node[Cur_City].Next_City;
+                if(Temp_Next_City==Null)
+                        break;
+        }
+}
 
 // Copy information from Struct_Node *All_Node to Struct_Node *Best_All_Node
 void Store_Best_Solution()
