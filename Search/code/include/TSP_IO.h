@@ -346,7 +346,7 @@ void Print_TSP_Tour(int Begin_City)
 	int Cur_City=Begin_City;
 	do
 	{
-		printf("%d ",Cur_City+1);
+		// printf("%d ",Cur_City+1);
 		Cur_City=All_Node[Cur_City].Next_City;		
 	}while(Cur_City != Null && Cur_City != Begin_City);
 }
