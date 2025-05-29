@@ -258,6 +258,63 @@ void Restore_Best_Solution()
 	}	 
 }
 
+// <<<<<<< iylxt2-codex/integrate-2-opt-local-search
+Distance_Type Greedy_Rollout(int start_city)
+{
+    for(int i=0;i<Virtual_City_Num;i++)
+        If_City_Selected[i]=false;
+    int cur=start_city;
+    int visited=1;
+    If_City_Selected[cur]=true;
+    Distance_Type total=0;
+    while(visited < Virtual_City_Num)
+    {
+        int next=Get_Neareast_Unselected_City(cur);
+        if(next==Null)
+            break;
+        total+=Get_Distance(cur,next);
+        cur=next;
+        If_City_Selected[cur]=true;
+        visited++;
+    }
+    total+=Get_Distance(cur,start_city);
+    return total;
+}
+
+// Perform greedy rollout and then apply 2-Opt local search
+Distance_Type Greedy_Rollout_2Opt(int start_city)
+{
+    // Build a greedy tour stored in Solution[]
+    for(int i=0;i<Virtual_City_Num;i++)
+        If_City_Selected[i]=false;
+
+    int cur = start_city;
+    int visited = 1;
+    Solution[0] = cur;
+    If_City_Selected[cur] = true;
+
+    while(visited < Virtual_City_Num)
+    {
+        int next = Get_Neareast_Unselected_City(cur);
+        if(next==Null)
+        {
+            // Greedy rollout failed to construct a full tour
+            return Greedy_Rollout(start_city);
+        }
+        Solution[visited++] = next;
+        If_City_Selected[next] = true;
+        cur = next;
+    }
+
+    // Close the tour
+    Convert_Solution_To_All_Node();
+
+    // Apply 2-Opt local search on the greedy tour
+    Local_Search_by_2Opt_Move();
+
+    return Get_Solution_Total_Distance();
+}
+// =======
 Distance_Type Greedy_Rollout(int start_city)
 {
     for(int i=0;i<Virtual_City_Num;i++)
@@ -317,3 +374,4 @@ Distance_Type Greedy_Rollout_2Opt(int start_city)
 
     return Get_Solution_Total_Distance();
 }
+// >>>>>>> main
