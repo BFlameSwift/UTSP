@@ -255,3 +255,24 @@ void Restore_Best_Solution()
 	}	 
 }
 
+Distance_Type Greedy_Rollout(int start_city)
+{
+    for(int i=0;i<Virtual_City_Num;i++)
+        If_City_Selected[i]=false;
+    int cur=start_city;
+    int visited=1;
+    If_City_Selected[cur]=true;
+    Distance_Type total=0;
+    while(visited < Virtual_City_Num)
+    {
+        int next=Get_Neareast_Unselected_City(cur);
+        if(next==Null)
+            break;
+        total+=Get_Distance(cur,next);
+        cur=next;
+        If_City_Selected[cur]=true;
+        visited++;
+    }
+    total+=Get_Distance(cur,start_city);
+    return total;
+}
